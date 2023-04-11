@@ -6,19 +6,25 @@ import os
 import csv
 import argparse
 
-
+## Check range for siglevel
+class Range(object):
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+    def __eq__(self, other):
+        return self.start <= other <= self.end
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--savepath', type=str, required=True)
 parser.add_argument('--dirfile',type=str, required=True)
-parser.add_argument('--siglevel',type=float,required=True)
+parser.add_argument('--siglevel',type=float,required=True,choices=[Range(0.0, 1.0)]) 
 args = parser.parse_args()
 
 ## Loop through all files
 
-sig_level = argparse.siglevel
-dirpath = argparse.dirfile
-savepath = argparse.savepath
+sig_level = args.siglevel
+dirpath = args.dirfile
+savepath = args.savepath
 
 # Determine if file exists.  If does, delete
 
@@ -34,7 +40,6 @@ with open(outputpath, 'w', newline='') as csv_file:
     writer.writerow(['Motif_Pair','Observed','P-value','Significant'])
 
 for folder_name in os.listdir(dirpath):
-    print(folder_name)
     outputpath = savepath+"\\"+"p_values.txt"
     with open(dirpath+'\\'+str(folder_name)+'\\'+'simulations.txt', 'r') as infile:
         reader = csv.reader(infile)

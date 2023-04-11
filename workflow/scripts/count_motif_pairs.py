@@ -36,9 +36,9 @@ df.drop_duplicates(subset=['loop_id', 'anchor2_id', 'motif_id'], inplace=True)
 motif_pair_counter = Counter()
 
 # Test file only looks at first 100 to save on time
-# PLEASE DELETE [1:100] WHEN DOING ACTUAL SIMULATION
+# PLEASE DELETE "t" WHEN DOING ACTUAL SIMULATION
 
-for loop_id, loop_df in df.groupby('loop_id')[1:100]:
+for loop_id, loop_df in df.groupby('loop_id'):
     
     anchor1_df = loop_df.loc[loop_df.anchor_1 == True]
     anchor2_df = loop_df.loc[loop_df.anchor_2 == True]
@@ -52,7 +52,7 @@ for loop_id, loop_df in df.groupby('loop_id')[1:100]:
     
     for p in perms:
         motif_pair_counter[p] += 1
-
+t = 1
 for motif_pair in motif_pair_counter.items():
     # Clean out characters for file neames
     folder_name = str(motif_pair[0]).replace("'","").replace("(","").replace(")","").replace(" ","_").replace(",","").replace(":",".")
@@ -64,7 +64,10 @@ for motif_pair in motif_pair_counter.items():
     # Save observed file in text file
     with open(args.outputpath+'\\'+str(folder_name)+'\\'+'simulations.txt', 'w', newline='') as csv_file:
         data = [[motif_pair[1]]]
-        print(data)
         writer = csv.writer(csv_file)
         writer.writerow(['Observed'])
         writer.writerows(data)
+    t+=1
+    if t == 100:
+        break
+    

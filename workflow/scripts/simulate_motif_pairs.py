@@ -54,8 +54,8 @@ for loop_id, loop_df in df.groupby('loop_id'):
 
 ##Inputs needed, dataframe or text file of dataframe, number of sims you want, and directory path
 bootstrap_df = df
-sims = argparse.sims
-dirpath = argparse.dirfile
+sims = args.sims
+dirpath = args.dirfile
 ##Permutate All motifs across the Chromosome
 sim = 1
 i = 0
@@ -120,7 +120,6 @@ for motif_pair in motif_pair_counter.items():
             writer.writerows(dataentry)
         sim+=1
     t+=1
-    print(t)
     if t == 100:
         break
             
