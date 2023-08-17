@@ -1,0 +1,31 @@
+type="a_plus"
+mkdir -p "/mnt/BioHome/rignacio/rignacio/Statistics/Motif_Pairs_100000_only_chr/${type}"
+while read -r line
+do
+input_path=$(echo -n "$line")
+sample_name=$(echo "$input_path" | rev | cut -d'/' -f3 | rev)
+sample_dir="/mnt/bioadhoc-temp/Groups/vd-ay/rignacio/Statistics/Motif_Pairs_100000_only_chr/${type}/${sample_name}"
+batch_fn="${sample_dir}/batch\${SLURM_ARRAY_TASK_ID}.results.txt"
+
+
+echo -n "#!/bin/sh
+#SBATCH --job-name=Statistics_job
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --mem=32g
+#SBATCH --time=08:25:00
+#SBATCH --output=/mnt/BioHome/rignacio/rignacio/Statistics/Logs/job_output_file_sample.txt 
+#SBATCH --error=/mnt/BioHome/rignacio/rignacio/Statistics/Logs/job_output_file_error_file.txt
+#SBATCH --mail-type=ALL
+
+##########################
+##### make a qsub wrapper that runs a sample + sim at a time
+##########################
+mkdir -p "${sample_dir}"
+input_path="${input_path}"
+batch_fn="${batch_fn}"
+##### qsub script - run one batch at a time
+/mnt/bioadhoc-temp/Groups/vd-ay/rignacio/Scripts/Library/miniconda3/miniconda3/bin/python3.10 /mnt/BioHome/rignacio/rignacio/motif_pair_enrichment/workflow/scripts/sample_batches_with_distance.py --inputpath \"\$input_path\" --savepath \"\$batch_fn\" --sims 1000 --account_dist \"No\" --account_dist 20000000" > /mnt/BioHome/rignacio/rignacio/motif_pair_enrichment/workflow/scripts/Batches/${type}/${sample_name}-onlychr.qsh
+sbatch --array=1-100 /mnt/BioHome/rignacio/rignacio/motif_pair_enrichment/workflow/scripts/Batches/${type}/${sample_name}-onlychr.qsh
+
+done < "/mnt/BioHome/rignacio/rignacio/motif_pair_enrichment/workflow/scripts/Final_Sims_Scripts/${type}.txt"
