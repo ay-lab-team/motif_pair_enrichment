@@ -1,0 +1,7 @@
+/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/biorep_merged/results/motif_analysis/meme/fimo/ctcf_test/A673-siCT-Dh1-72h-D347-D362.GSE156650.Homo_Sapiens.CTCF.biorep_merged/summarize_results/summary.txt
+/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/biorep_merged/results/motif_analysis/meme/fimo/ctcf_test/Hela-S3-OE.GSE108869.Homo_Sapiens.CTCF.biorep_merged/summarize_results/summary.txt
+/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/biorep_merged/results/motif_analysis/meme/fimo/ctcf_test/HeLa-S3-shBHLHE40.GSE137849.Homo_Sapiens.CTCF.biorep_merged/summarize_results/summary.txt
+/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/biorep_merged/results/motif_analysis/meme/fimo/ctcf_test/HeLa-S3-shcontrol.GSE137849.Homo_Sapiens.CTCF.biorep_merged/summarize_results/summary.txt
+/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/biorep_merged/results/motif_analysis/meme/fimo/ctcf_test/NSD2-High-NTKO.GSE131651.Homo_Sapiens.CTCF.biorep_merged/summarize_results/summary.txt
+/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/biorep_merged/results/motif_analysis/meme/fimo/ctcf_test/NSD2-Low-TKO.GSE131651.Homo_Sapiens.CTCF.biorep_merged/summarize_results/summary.txt
+/mnt/bioadhoc-temp/Groups/vd-ay/kfetter/hichip-db-loop-calling/biorep_merged/results/motif_analysis/meme/fimo/ctcf_test/OCI-AML3-WT.GSE111537.Homo_Sapiens.CTCF.biorep_merged/summarize_results/summary.txt
