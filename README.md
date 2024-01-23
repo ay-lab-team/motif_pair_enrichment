@@ -1,4 +1,4 @@
-# motif_pair_enrichment
+# Enrichment Analysis for Motif Pairs
 
 ## Description
 The main idea behind this analysis is that 3D contacts may be happening where pairs of 
@@ -9,6 +9,10 @@ compared to their distribution to assess signficance.
 
 The most important script is: sample_batches_with_distance.py which run a set of
 simulations.
+
+Note: We initially developed this pipeline for the case of motif pairs joined by 3D
+contacts but this pipeline could be applied to motif pairs generated through any form
+of analysis.
 
 ## Installation
 Install Python 3.10 and seaborn
