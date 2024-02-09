@@ -1,0 +1,42 @@
+#!/bin/sh
+#SBATCH --job-name=motif-pairs
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --mem=32g
+#SBATCH --time=10:00:00
+#SBATCH --output=results/motif_pairs/Motif_Pairs_100000_only_chr/logs/agg_simulations.%A.%a.out
+#SBATCH --error=results/motif_pairs/Motif_Pairs_100000_only_chr/logs/agg_simulations.%A.%a.err
+#SBATCH --mail-type=None
+
+# setting software paths
+python="/mnt/bioadhoc-temp/Groups/vd-ay/rignacio/Scripts/Library/miniconda3/miniconda3/bin/python3.10"
+
+# getting arguments
+if [ ! -v "SLURM_ARRAY_TASK_ID" ];
+then
+    SLURM_ARRAY_TASK_ID=$1
+    SLURM_SUBMIT_DIR="."
+fi 
+
+# extract the sample information using the SLURM_ARRAY_TASK_ID
+type="a_plus"
+samplesheet="results/samplesheet/motif_pairs/${type}.txt"
+input_path=$(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p")
+sample_name=$(echo "$input_path" | rev | cut -d'/' -f3 | rev)
+
+# printing sample information
+echo
+echo "Processing"
+echo "----------"
+echo "sample_name: $sample_name"
+echo "input_path: $input_path"
+echo "samplesheet: $samplesheet"
+echo
+
+# make the output directory
+sim_dir="results/motif_pairs/Motif_Pairs_100000_only_chr/${type}/${sample_name}"
+mkdir -p $sim_dir
+
+# run the simulations 
+#$python workflow/scripts/pipeline/aggregate_simulations_pvalues.py --inputfilepath "$input_path" --simpath "$sim_dir" --simnums 100
+$python workflow/scripts/pipeline/aggregate_simulations_pvalues.py --inputfilepath "$input_path" --simpath "$sim_dir" --simnums 1
