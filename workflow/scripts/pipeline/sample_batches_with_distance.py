@@ -85,7 +85,7 @@ anchor_shuffle_list = {}
 anchor_ids = []
 motifs_count_sims = []
 
-# Loop through all enteries in dataframe
+# Loop through all entries in dataframe
 for i, sr in filter_df.iterrows():
 
     # Create anchor ids
@@ -95,7 +95,7 @@ for i, sr in filter_df.iterrows():
     # Create blank list of anchors for shuffling based on distance
     entry_shuffle = []
     
-    # Get chromosme
+    # Get chromosome
     chr1 = sr["chr1"]
     chr2 = sr["chr2"]
 
@@ -138,8 +138,10 @@ for i, sr in filter_df.iterrows():
         # Create column in dataframe to get distance measure for anchor 1
         filter_df["tmp_dist"] = abs(filter_df["start2"] - sr["start2"])
         if account_dist == "Yes":
+
             # Only keep anchors within certain distance and within certain chromosome
             tmp_dist_df = filter_df[(filter_df["tmp_dist"]<=within_dist) & (filter_df["chr1"]==chr1) & (filter_df["chr2"]==chr2)].copy()
+
         else:
             # Only keep motifs within specific chromosome
             tmp_dist_df = filter_df[(filter_df["chr1"]==chr1) & (filter_df["chr2"]==chr2)].copy()
@@ -148,7 +150,7 @@ for i, sr in filter_df.iterrows():
         tmp_dist_df["anchor2_id_name"] = tmp_dist_df["chr2"] + "-" + \
                                             tmp_dist_df["start2"].astype("str") + "-" + \
                                             tmp_dist_df["end2"].astype("str")
-        entry_shuffle+=list(tmp_dist_df["anchor2_id_name"])
+        entry_shuffle += list(tmp_dist_df["anchor2_id_name"])
 
         # Create list of anchors within distance
         anchor_shuffle_list[anchor2_id] = entry_shuffle
@@ -175,8 +177,6 @@ while sim_idx < sims:
         # Get name of anchor
         anch_name = '{}-{}-{}'.format(entry["chr1"], entry["start1"], entry["end1"])
 
-        ## Get length of how many anchors
-        
         # Simulate anchors based on chromsome and distance
         sim_anchors1 = np.random.choice(anchor_shuffle_list[anch_name], size=1, replace=True) 
         sim_anchors2 = np.random.choice(anchor_shuffle_list[anch_name], size=1, replace=True) 
@@ -194,13 +194,14 @@ while sim_idx < sims:
         # Record them in counter
         for p in shuffle_combos:
             sims_motif_pair_counter[p] += 1
+
     sim_results.append(sims_motif_pair_counter)
     sim_idx += 1
     
 ###############################################################################
 # Save json file to output
 ###############################################################################
-print("# Save json file to output"
+print("# Save json file to output")
 
 # Keys are from observed
 # Aggregate simulations into one list only for observed motif pairs   

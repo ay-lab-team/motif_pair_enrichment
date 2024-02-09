@@ -21,11 +21,11 @@ args = parser.parse_args()
 columns = ['loop_chr1', 'loop_start1', 'loop_end1', 'loop_chr2',
            'loop_start2', 'loop_end2', 'motif_ID_1', 'motif_name_1',
            'motif_ID_2', 'motif_name_2']
-df = pd.read_csv(args.inputfilepath, sep="\t", header=0)
+df = pd.read_csv(args.inputfilepath, sep='\t', header=0)
 
 # Drop about half of the loops
 # Drop any anchors with no motifs in either anchor
-filter_df = df[(df['motif_ID_1'] != "None" ) & (df['motif_ID_2'] != "None")].reset_index(drop=True)
+filter_df = df[(df['motif_ID_1'] != 'None' ) & (df['motif_ID_2'] != 'None')].reset_index(drop=True)
 
 ###############################################################################
 # Count up unique motif pairs
@@ -48,14 +48,14 @@ for num in range(len(filter_df)):
     combos = [(x[0], x[1]) if x[0] < x[1] else (x[1], x[0]) for x in combos]
     
     # Get chromsome attributes for Chromsome 1
-    chr1_name = str(filter_df["chr1"][num])
-    chr1_start = str(filter_df["start1"][num])
-    chr1_end = str(filter_df["end1"][num])
+    chr1_name = str(filter_df['chr1'][num])
+    chr1_start = str(filter_df['start1'][num])
+    chr1_end = str(filter_df['end1'][num])
     
     # Get chromosome attributes for Chromsome 2
-    chr2_name = str(filter_df["chr2"][num])
-    chr2_start = str(filter_df["start2"][num])
-    chr2_end = str(filter_df["end2"][num])
+    chr2_name = str(filter_df['chr2'][num])
+    chr2_start = str(filter_df['start2'][num])
+    chr2_end = str(filter_df['end2'][num])
         
     # Record them in counter
     for p in combos:
@@ -69,7 +69,10 @@ uniq_motif_pairs = set(uniq_motif_pairs)
 results = {}
 simcount = args.simnums + 1
 for i in range(1, simcount):
-    read_d = json.loads(open(str(args.simpath)+'/batch'+str(i)+'.results.txt').read())
+
+    fn = str(args.simpath) + '/batch' + str(i) + '.results.txt'
+    read_d = json.loads(open(fn).read())
+
     for motif_pair in uniq_motif_pairs:
         obs = motif_pair_counter[motif_pair]
         sims = read_d[str(motif_pair)]
@@ -100,11 +103,13 @@ for motif_pair, count in results.items():
     p_value = count / totalsims
 
     # Get motif-pair, p-value, and observed count of p-value
-    entry = {"Pair":motif_pair,"Sim_Count":count, "P_value": p_value, "Obs_Count": motif_pair_counter[motif_pair]}
+    entry = {'Motif1': motif_pair[0], 'Motif2': motif_pair[1], 'Sim_Count': count,
+             'P_value': p_value, 'Obs_Count': motif_pair_counter[motif_pair]}
     p_values.append(entry)
 
 # Create dataframe for all counts
 mp_data = pd.DataFrame(p_values)
 
 # Save to dataframe
-mp_data.to_csv(str(args.simpath)+"/P_values_agg")
+outfn = str(args.simpath) + '/P_values_agg.tsv'
+mp_data.to_csv(outfn, sep='\t', index=False)

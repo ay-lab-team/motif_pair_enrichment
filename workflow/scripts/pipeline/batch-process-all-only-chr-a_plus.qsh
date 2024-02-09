@@ -14,15 +14,15 @@ python="/mnt/bioadhoc-temp/Groups/vd-ay/rignacio/Scripts/Library/miniconda3/mini
 # getting arguments
 if [ ! -v "SLURM_ARRAY_TASK_ID" ];
 then
-    SLURM_ARRAY_TASK_ID=$1
+    SLURM_ARRAY_TASK_ID=$2
     SLURM_SUBMIT_DIR="."
 fi 
 
 # extract the sample information using the SLURM_ARRAY_TASK_ID
 type="a_plus"
 samplesheet="results/samplesheet/motif_pairs/${type}.txt"
-input_path=$(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p")
-sample_name=$(echo "$input_path" | rev | cut -d'/' -f3 | rev)
+sample_name=$1
+input_path=$(grep "$sample_name" $samplesheet | cut -f 2)
 
 # printing sample information
 echo
@@ -38,11 +38,12 @@ echo
 ###############################################################################
 
 # make the sample dir
-sample_dir="/mnt/bioadhoc-temp/Groups/vd-ay/rignacio/Statistics/Motif_Pairs_100000_only_chr/${type}/${sample_name}"
+sample_dir="results/motif_pairs/Motif_Pairs_100000_only_chr/${type}/${sample_name}"
 mkdir -p "${sample_dir}"
 
 # specify the batch file path
 batch_fn="${sample_dir}/batch${SLURM_ARRAY_TASK_ID}.results.txt"
 
 # run one batch for the given sample
-$python workflow/scripts/pipeline/sample_batches_with_distance.py --inputpath "$input_path" --savepath "$batch_fn" --sims 1000 --account_dist No --account_dist 20000000
+#$python workflow/scripts/pipeline/sample_batches_with_distance.py --inputpath "$input_path" --savepath "$batch_fn" --sims 1000 --account_dist No --account_dist 20000000
+$python workflow/scripts/pipeline/sample_batches_with_distance.py --inputpath "$input_path" --savepath "$batch_fn" --sims 1 --account_dist No --account_dist 20000000
