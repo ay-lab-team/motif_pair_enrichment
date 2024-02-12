@@ -21,8 +21,9 @@ fi
 # extract the sample information using the SLURM_ARRAY_TASK_ID
 type="a_plus"
 samplesheet="results/samplesheet/motif_pairs/${type}.txt"
-input_path=$(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p")
-sample_name=$(echo "$input_path" | rev | cut -d'/' -f3 | rev)
+sample_info=$(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p")
+sample_name=$(echo "$sample_info" | cut -d $'\t' -f 1)
+input_path=$(echo "$sample_info" | cut -d $'\t' -f 2)
 
 # printing sample information
 echo
@@ -38,5 +39,5 @@ sim_dir="results/motif_pairs/Motif_Pairs_100000_only_chr/${type}/${sample_name}"
 mkdir -p $sim_dir
 
 # run the simulations 
-#$python workflow/scripts/pipeline/aggregate_simulations_pvalues.py --inputfilepath "$input_path" --simpath "$sim_dir" --simnums 100
-$python workflow/scripts/pipeline/aggregate_simulations_pvalues.py --inputfilepath "$input_path" --simpath "$sim_dir" --simnums 1
+$python workflow/scripts/pipeline/aggregate_simulations_pvalues.py --inputfilepath "$input_path" --simpath "$sim_dir" --simnums 100
+# testing only: $python workflow/scripts/pipeline/aggregate_simulations_pvalues.py --inputfilepath "$input_path" --simpath "$sim_dir" --simnums 1

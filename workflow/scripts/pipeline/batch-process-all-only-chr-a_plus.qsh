@@ -45,5 +45,5 @@ mkdir -p "${sample_dir}"
 batch_fn="${sample_dir}/batch${SLURM_ARRAY_TASK_ID}.results.txt"
 
 # run one batch for the given sample
-#$python workflow/scripts/pipeline/sample_batches_with_distance.py --inputpath "$input_path" --savepath "$batch_fn" --sims 1000 --account_dist No --account_dist 20000000
-$python workflow/scripts/pipeline/sample_batches_with_distance.py --inputpath "$input_path" --savepath "$batch_fn" --sims 1 --account_dist No --account_dist 20000000
+$python workflow/scripts/pipeline/sample_batches_with_distance.py --inputpath "$input_path" --savepath "$batch_fn" --sims 1000 --account_dist No --account_dist 20000000
+# testing only $python workflow/scripts/pipeline/sample_batches_with_distance.py --inputpath "$input_path" --savepath "$batch_fn" --sims 1 --account_dist No --account_dist 20000000

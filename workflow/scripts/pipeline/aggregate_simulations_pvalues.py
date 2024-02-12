@@ -30,6 +30,8 @@ filter_df = df[(df['motif_ID_1'] != 'None' ) & (df['motif_ID_2'] != 'None')].res
 ###############################################################################
 # Count up unique motif pairs
 ###############################################################################
+print("# Count up unique motif pairs")
+
 motif_pair_counter = Counter()
 uniq_motif_pairs = []
 for num in range(len(filter_df)):
@@ -66,6 +68,8 @@ uniq_motif_pairs = set(uniq_motif_pairs)
 ###############################################################################
 # Aggregate simulations
 ###############################################################################
+print("# Aggregate simulations")
+
 results = {}
 simcount = args.simnums + 1
 for i in range(1, simcount):
@@ -74,6 +78,7 @@ for i in range(1, simcount):
     read_d = json.loads(open(fn).read())
 
     for motif_pair in uniq_motif_pairs:
+
         obs = motif_pair_counter[motif_pair]
         sims = read_d[str(motif_pair)]
 
@@ -85,16 +90,18 @@ for i in range(1, simcount):
 
         # If first batch, create result
         if i == 1:
-            results[motif_pair]=above_obs
+            results[motif_pair] = above_obs
 
         # If any other batch, add to previous batch
         else:
-            results[motif_pair]+=above_obs
+            results[motif_pair] += above_obs
     print(i)
 
 ###############################################################################
 # Calculate p-value
 ###############################################################################
+print("# Calculate p-value")
+
 p_values = []
 for motif_pair, count in results.items():
 
