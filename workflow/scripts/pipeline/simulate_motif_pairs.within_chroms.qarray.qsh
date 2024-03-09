@@ -23,7 +23,7 @@ then
     SLURM_SUBMIT_DIR="."
 fi 
 
-# extract the sample information using the SLURM_ARRAY_TASK_ID
+# set the input path from FIMO results
 input_path="results/fimo/${sample_name}/summarize_results/summary.txt"
 
 # printing sample information
