@@ -14,30 +14,31 @@ python="/mnt/bioadhoc-temp/Groups/vd-ay/rignacio/Scripts/Library/miniconda3/mini
 # getting arguments
 if [ ! -v "SLURM_ARRAY_TASK_ID" ];
 then
-    SLURM_ARRAY_TASK_ID=$1
+    samplesheet=$1
+    SLURM_ARRAY_TASK_ID=$2
     SLURM_SUBMIT_DIR="."
 fi 
 
 # extract the sample information using the SLURM_ARRAY_TASK_ID
-type="a_plus"
-samplesheet="results/samplesheet/motif_pairs/${type}.txt"
-sample_info=$(cat $samplesheet | sed -n "${SLURM_ARRAY_TASK_ID}p")
-sample_name=$(echo "$sample_info" | cut -d $'\t' -f 1)
-input_path=$(echo "$sample_info" | cut -d $'\t' -f 2)
+sample_name=$(sed -n "${SLURM_ARRAY_TASK_ID}p" $samplesheet)
+
+# set the input path from FIMO results
+input_path="results/fimo/${sample_name}/summarize_results/summary.txt"
 
 # printing sample information
 echo
 echo "Processing"
 echo "----------"
+echo "samplesheet: $samplesheet"
 echo "sample_name: $sample_name"
 echo "input_path: $input_path"
-echo "samplesheet: $samplesheet"
 echo
 
 # make the output directory
-sim_dir="results/motif_pairs/Motif_Pairs_100000_only_chr/${type}/${sample_name}"
+sim_dir="results/motif_pairs/Motif_Pairs_100000_only_chr/${sample_name}/"
 mkdir -p $sim_dir
 
 # run the simulations 
-$python workflow/scripts/pipeline/aggregate_simulations_pvalues.py --inputfilepath "$input_path" --simpath "$sim_dir" --simnums 100
+$python workflow/scripts/pipeline/aggregate_simulations_pvalues.py \
+    --inputfilepath "$input_path" --simpath "$sim_dir" --simnums 100 --skip-missing-sims
 # testing only: $python workflow/scripts/pipeline/aggregate_simulations_pvalues.py --inputfilepath "$input_path" --simpath "$sim_dir" --simnums 1

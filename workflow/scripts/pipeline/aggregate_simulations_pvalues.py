@@ -1,10 +1,12 @@
-import itertools as it
-import pandas as pd
-from collections import defaultdict, Counter
+import os
 import json
-import numpy as np
 import time
+import itertools as it
+from collections import defaultdict, Counter
 import argparse
+
+import numpy as np
+import pandas as pd
 
 
 ###############################################################################
@@ -14,6 +16,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--inputfilepath', type=str, required=True)
 parser.add_argument('--simpath',type=str,required=True)
 parser.add_argument('--simnums', type=int, required=True)
+parser.add_argument('--skip-missing-sims', dest='skip_sim', action='store_true', required=False)
 args = parser.parse_args()
 
 # inputfilepath should be the location to a fimo based output
@@ -74,13 +77,25 @@ results = {}
 simcount = args.simnums + 1
 for i in range(1, simcount):
 
+    # get file path of the current batch
     fn = str(args.simpath) + '/batch' + str(i) + '.results.txt'
-    read_d = json.loads(open(fn).read())
+
+    # if the current file doesn't exists and skip has been activated
+    # then this batch will be skipped
+    if not os.path.exists(fn) and args.skip_sim:
+        print(f'Skipped: {fn}')
+        continue
+
+    # load the current batch
+    curr_sim = json.loads(open(fn).read())
 
     for motif_pair in uniq_motif_pairs:
 
         obs = motif_pair_counter[motif_pair]
-        sims = read_d[str(motif_pair)]
+
+        # get the counts for sims if present or else return a negative number
+        # which will ensure thie sim will not be higher than observer
+        sims = curr_sim.get(str(motif_pair), [-1000])
 
         # Go through list to see if it is above the observered count
         listnum = [True if x >= obs else False for x in sims]
