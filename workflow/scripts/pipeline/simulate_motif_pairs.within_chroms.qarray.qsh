@@ -8,29 +8,31 @@
 #SBATCH --error=results/motif_pairs/Motif_Pairs_100000_only_chr/logs/run_simulations.%A.%a.err
 #SBATCH --mail-type=ALL
 
+# run in strict mode
+set -euo pipefail
+
 # setting software paths
 python="/mnt/bioadhoc-temp/Groups/vd-ay/rignacio/Scripts/Library/miniconda3/miniconda3/bin/python3.10"
 
 # getting arguments
 if [ ! -v "SLURM_ARRAY_TASK_ID" ];
 then
-    SLURM_ARRAY_TASK_ID=$2
+    samplesheet=$1
+    sample_name=$2
+    SLURM_ARRAY_TASK_ID=$3
     SLURM_SUBMIT_DIR="."
 fi 
 
 # extract the sample information using the SLURM_ARRAY_TASK_ID
-type="a_plus"
-samplesheet="results/samplesheet/motif_pairs/${type}.txt"
-sample_name=$1
-input_path=$(grep "$sample_name" $samplesheet | cut -f 2)
+input_path="results/fimo/${sample_name}/summarize_results/summary.txt"
 
 # printing sample information
 echo
 echo "Processing"
 echo "----------"
+echo "samplesheet: $samplesheet"
 echo "sample_name: $sample_name"
 echo "input_path: $input_path"
-echo "samplesheet: $samplesheet"
 echo
 
 ###############################################################################
@@ -38,12 +40,18 @@ echo
 ###############################################################################
 
 # make the sample dir
-sample_dir="results/motif_pairs/Motif_Pairs_100000_only_chr/${type}/${sample_name}"
+sample_dir="results/motif_pairs/Motif_Pairs_100000_only_chr/${sample_name}"
 mkdir -p "${sample_dir}"
 
 # specify the batch file path
 batch_fn="${sample_dir}/batch${SLURM_ARRAY_TASK_ID}.results.txt"
 
 # run one batch for the given sample
-$python workflow/scripts/pipeline/sample_batches_with_distance.py --inputpath "$input_path" --savepath "$batch_fn" --sims 1000 --account_dist No --account_dist 20000000
-# testing only $python workflow/scripts/pipeline/sample_batches_with_distance.py --inputpath "$input_path" --savepath "$batch_fn" --sims 1 --account_dist No --account_dist 20000000
+$python workflow/scripts/pipeline/simulate_motif_pairs.py \
+    --sims 1000 --account_dist No --account_dist 20000000 \
+    --inputpath "$input_path" --savepath "$batch_fn"
+
+# testing only $python workflow/scripts/pipeline/sample_batches_with_distance.py \
+#$python workflow/scripts/pipeline/sample_batches_with_distance.py \
+# --sims 1 --account_dist No --account_dist 20000000 \
+# --inputpath "$input_path" --savepath "$batch_fn"
