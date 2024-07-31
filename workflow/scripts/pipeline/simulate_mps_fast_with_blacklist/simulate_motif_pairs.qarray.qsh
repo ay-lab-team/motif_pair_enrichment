@@ -1,0 +1,65 @@
+#!/bin/sh
+#SBATCH --job-name=simulate-motif-pairs-fast-with-blacklist
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --mem=32g
+#SBATCH --time=30:00:00
+#SBATCH --mail-type=ALL
+
+# run in strict mode
+set -euo pipefail
+
+# setting software paths
+#python="/mnt/bioadhoc-temp/Groups/vd-ay/rignacio/Scripts/Library/miniconda3/miniconda3/bin/python3.10"
+python="/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/mambaforge-pypy3/envs/lc-pipelines/bin/python"
+
+# getting arguments
+if [ ! -v "SLURM_ARRAY_TASK_ID" ];
+then
+    samplesheet=$1
+    sample_name=$2
+    SLURM_ARRAY_TASK_ID=$3
+    SLURM_SUBMIT_DIR="."
+fi 
+
+# get helper functions
+source workflow/source_funcs.sh
+
+# set the input path from FIMO results
+input_path="results/fimo/${sample_name}/summarize_results/summary.txt"
+
+blacklist="results/blacklists/hg38-blacklist.v2.bed"
+
+started_job_message "simulate-motif-pairs-fast-with-blacklist"
+
+# printing sample information
+echo
+echo "Processing"
+echo "----------"
+echo "samplesheet: $samplesheet"
+echo "sample_name: $sample_name"
+echo "input_path: $input_path"
+echo "blacklist: $blacklist"
+echo
+
+###############################################################################
+# make a qsub wrapper that runs a sample + sim at a time
+###############################################################################
+
+# make the sample dir
+sample_dir="results/motif_pairs/chrom_correction_only.fast.with_blacklist/${sample_name}"
+mkdir -p "${sample_dir}"
+
+# specify the batch file path
+batch_fn="${sample_dir}/batch${SLURM_ARRAY_TASK_ID}.results.txt"
+
+echo "sample_dir: $sample_dir"
+echo "batch_fn: $batch_fn"
+
+# run one batch for the given sample
+$python workflow/scripts/pipeline/simulate_motif_pairs.fast.py \
+    --sims 1000 --account_dist No \
+    --inputpath "$input_path" --savepath "$batch_fn" \
+    --blacklist "$blacklist"
+
+ended_job_message "simulate-motif-pairs-fast-with-blacklist"
