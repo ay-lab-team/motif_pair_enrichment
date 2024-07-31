@@ -4,8 +4,6 @@
 #SBATCH --ntasks=1
 #SBATCH --mem=32g
 #SBATCH --time=10:00:00
-#SBATCH --output=results/motif_pairs/Motif_Pairs_100000_only_chr/logs/agg_simulations.%A.%a.out
-#SBATCH --error=results/motif_pairs/Motif_Pairs_100000_only_chr/logs/agg_simulations.%A.%a.err
 #SBATCH --mail-type=None
 
 # setting software paths
@@ -35,7 +33,7 @@ echo "input_path: $input_path"
 echo
 
 # make the output directory
-sim_dir="results/motif_pairs/Motif_Pairs_100000_only_chr/${sample_name}/"
+sim_dir="results/motif_pairs/chrom_correction_only/${sample_name}/"
 mkdir -p $sim_dir
 
 # run the simulations 

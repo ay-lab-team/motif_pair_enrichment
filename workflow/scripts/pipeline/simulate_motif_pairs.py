@@ -1,6 +1,6 @@
 import itertools as it
 import pandas as pd
-from collections import defaultdict,Counter
+from collections import defaultdict, Counter
 import json
 import numpy as np
 import time
@@ -14,7 +14,7 @@ parser.add_argument('--inputpath', type=str, required=True)
 parser.add_argument('--savepath', type=str, required=True)
 parser.add_argument('--sims', type=int, required=True)
 parser.add_argument('--account_dist', type=str, required=True, default="Yes")
-parser.add_argument('--distance', type=int, required=False, default=20000000)
+parser.add_argument('--distance', type=int, required=False, default=2000000)
 args = parser.parse_args()
 
 inputpath = args.inputpath
@@ -30,34 +30,49 @@ columns = ['loop_chr1', 'loop_start1', 'loop_end1',
            'motif_name_2']
 df = pd.read_csv(inputpath, sep = '\t', header=0)
 
-# Drop any anchors with no motifs in either anchor
-filter_df = df[(df['motif_ID_1'] != 'None' ) & (df['motif_ID_2'] != 'None')].reset_index(drop=True)
+# drop any anchors with no motifs in either anchor (contains NaN)
+filter_df =  df.loc[(~df['motif_name_1'].isna()) & (~df['motif_name_2'].isna())].reset_index(drop=True)
+
+# add the anchor names
+def create_anchor_name(sr, anchor_no):
+    anchor_name = '{}-{}-{}'.format(sr[f'chr{anchor_no}'], sr[f'start{anchor_no}'], sr[f'end{anchor_no}'])
+    return(anchor_name)
+filter_df.loc[:, 'anchor_name1'] = filter_df.apply(create_anchor_name, args=[1], axis=1)
+filter_df.loc[:, 'anchor_name2'] = filter_df.apply(create_anchor_name, args=[2], axis=1)
+
 
 ###############################################################################
 # Counting Observed Motif Pairs
 ###############################################################################
 print('# Counting Observed')
 
+def sort_motifs(motifs):
+    sorted_motifs = tuple(sorted(motifs))
+    return sorted_motifs
+
 # Set up counter
 motif_pair_counter = Counter()
 
-# Loop through all enteries in dataframe
+# Loop through all entries in dataframe
 uniq_motif_pairs = []
 for num in range(len(filter_df)):
-    
+
     # Get motifs 1
     motifs1 = filter_df.motif_name_1[num].split(',')
     
+    # JR-Fix: I tried to remove duplicates but removed self motifs in the process.
+    # need to fix this.
     # Get motifs 2; to avoid duplicates motif pairs, motifs in anchor1 are removed
     # from motifs in anchor 2
-    motifs2 = [x for x in filter_df.motif_name_2[num].split(',') if x not in motifs1]
+    motifs2 = filter_df.motif_name_2[num].split(',')
     
     # Form the combination of all motif1 and motif2 pairs by
     # using the cross product
-    combos = list(it.product(motifs1, motifs2))
+    combos = it.product(motifs1, motifs2)
     
-    # Organize motifs into alphabetical order
-    combos = [(x[0], x[1]) if x[0] < x[1] else (x[1], x[0]) for x in combos]
+    # Organize motifs into alphabetical order and drop duplicates
+    combos = [sort_motifs(tmotifs) for tmotifs in combos]
+    combos = sorted(set(combos))
     
     # Record them in counter
     for p in combos:
@@ -85,8 +100,8 @@ motifs_count_sims = []
 for i, sr in filter_df.iterrows():
 
     # Create anchor ids
-    anchor1_id = '{}-{}-{}'.format(sr['chr1'], sr['start1'], sr['end1'])
-    anchor2_id = '{}-{}-{}'.format(sr['chr2'], sr['start2'], sr['end2'])
+    anchor1_id = sr['anchor_name1']
+    anchor2_id = sr['anchor_name2']
 
     # Create blank list of anchors for shuffling based on distance
     entry_shuffle = []
@@ -171,8 +186,6 @@ for i, sr in filter_df.iterrows():
 ###############################################################################
 print('# Conduct Simulations')
 
-sims = args.sims
-savepath = args.savepath
 sim_results = []
 sim_idx = 0
 num_loops = len(filter_df)
@@ -180,27 +193,25 @@ num_loops = len(filter_df)
 while sim_idx < sims:
 
     sims_motif_pair_counter = Counter()
-    for num, entry in filter_df.iterrows():
-
-        # Get name of anchor
-        anchor_name = '{}-{}-{}'.format(entry['chr1'], entry['start1'], entry['end1'])
+    for (anchor_name1, anchor_name2) in filter_df[['anchor_name1', 'anchor_name2']].values:
 
         # Simulate anchors based on chromsome and distance
-        sim_anchors1 = np.random.choice(anchor_shuffle_dict[anchor_name], size=1, replace=True) 
-        sim_anchors2 = np.random.choice(anchor_shuffle_dict[anchor_name], size=1, replace=True) 
+        sim_anchors1 = np.random.choice(anchor_shuffle_dict[anchor_name1], size=1, replace=True) 
+        sim_anchors2 = np.random.choice(anchor_shuffle_dict[anchor_name2], size=1, replace=True) 
         
         # Get motifs from simulated anchors
         # To remove duplicates motif pairs, motifs in anchor1 are removed from motifs in anchor 2
         sim_motifs1 = [anchor_slots[x] for x in sim_anchors1]
-        sim_motifs2 = [anchor_slots[x] for x in sim_anchors2 if x not in sim_motifs1]
+        sim_motifs2 = [anchor_slots[x] for x in sim_anchors2]
     
         # Form the combination of all motif1 and motif2 pairs by
         # using the cross product
         # JR Note: Why do we have use index [0]?
-        shuffle_combos = list(it.product(sim_motifs1[0], sim_motifs2[0]))
+        shuffle_combos = it.product(sim_motifs1[0], sim_motifs2[0])
 
         # Organize motifs into alphabetical order
-        shuffle_combos = [(x[0], x[1]) if x[0] < x[1] else (x[1], x[0]) for x in shuffle_combos]
+        shuffle_combos = [sort_motifs(tmotifs) for tmotifs in shuffle_combos]
+        shuffle_combos = sorted(set(shuffle_combos))
 
         # Record them in counter
         for p in shuffle_combos:

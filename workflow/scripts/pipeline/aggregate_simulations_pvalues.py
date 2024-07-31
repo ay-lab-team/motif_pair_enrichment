@@ -39,7 +39,6 @@ motif_pair_counter = Counter()
 uniq_motif_pairs = []
 for num in range(len(filter_df)):
 
-    # Are we suppoed to use set()???
     # Get motifs 1
     motifs1 = list(set(filter_df.motif_name_1[num].split(',')))
     
@@ -73,7 +72,7 @@ uniq_motif_pairs = set(uniq_motif_pairs)
 ###############################################################################
 print("# Aggregate simulations")
 
-results = {}
+results = Counter()
 simcount = args.simnums + 1
 for i in range(1, simcount):
 
@@ -93,9 +92,8 @@ for i in range(1, simcount):
 
         obs = motif_pair_counter[motif_pair]
 
-        # get the counts for sims if present or else return a negative number
-        # which will ensure thie sim will not be higher than observer
-        sims = curr_sim.get(str(motif_pair), [-1000])
+        # get the counts for sims if present or else return an empty list
+        sims = curr_sim.get(str(motif_pair), [])
 
         # Go through list to see if it is above the observered count
         listnum = [True if x >= obs else False for x in sims]
@@ -103,13 +101,9 @@ for i in range(1, simcount):
         # Count total number of sims above observed
         above_obs = sum(listnum)
 
-        # If first batch, create result
-        if i == 1:
-            results[motif_pair] = above_obs
+        # add to previous batch
+        results[motif_pair] += above_obs
 
-        # If any other batch, add to previous batch
-        else:
-            results[motif_pair] += above_obs
     print(i)
 
 ###############################################################################

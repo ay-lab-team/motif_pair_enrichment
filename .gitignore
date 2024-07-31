@@ -1,3 +1,4 @@
 *~
 *.un~
 results/
+.ipynb_checkpoints

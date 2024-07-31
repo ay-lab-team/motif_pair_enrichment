@@ -18,8 +18,10 @@ of analysis.
 Install Python 3.10 and seaborn
 
 ## Usage
-1) Run the different simulations with: `batch-process-all-only-chr-a_plus.qsh`
-2) Aggregate the simulations and calculate p-values: `aggregate-all-sims-only-chr-a_plus.qsh`
+1) Run the different simulations with: `workflow/scripts/pipeline/simulate_motif_pairs.within_chroms.commander.sh`
+2) Aggregate the simulations and calculate p-values: `workflow/scripts/pipeline/aggregate_simulations_pvalues.commander.sh`
+3) Analyze the results with `workflow/qscripts/summary/QQPlot_Analysis_For_All_Groups.ipynb`
+4) Analyze the results with `workflow/qscripts/summary/Summarize_Paired_Motif_Analysis.ipynb`
 
 ## Project status
 In progress. Romeo lead this work and Joaquin is re-running it for new samples.
