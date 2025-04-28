@@ -10,8 +10,8 @@
 # run with qsub
 ###############################################################################
 samplesheet="results/samplesheet/motif_pairs/samplesheet.txt"
-#for i in $(seq 1 53);
-for i in $(seq 2 53);
+#for i in $(seq 1 65);
+for i in $(seq 1 1);
 do
     sample_name=$(sed -n "${i}p" $samplesheet)
     echo $sample_name

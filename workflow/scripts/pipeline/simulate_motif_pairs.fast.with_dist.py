@@ -46,7 +46,7 @@ else:
             'motif_ID_1', 'motif_name_1', 'motif_ID_2', 'motif_name_2']
     loops_without_blk.columns = columns
 
-    # drop any loops with no motifs in either anchor (contains NaN)
+    # drop any anchors with no motifs in either anchor (contains NaN)
     filter_df =  loops_without_blk.loc[(~loops_without_blk['motif_name_1'].isna()) & (~loops_without_blk['motif_name_2'].isna())].reset_index(drop=True)
 
 # add the anchor names
@@ -97,7 +97,7 @@ uniq_motif_pairs = list(set(uniq_motif_pairs))
 # Construct Anchor Slots and Dictionary
 ###############################################################################
 # An anchor slot is composed of a genetic region corresponding to a loop anchor
-# and its constituent motifs as a list. These are stored in dictionaries as:
+# and its constitutent motifs as a list. These are stored in dictionarys as:
 # {'chr1-10000-15000': ['ACT', 'GGG', 'CGT']}. These anchor slots are used for
 # simulation steps where the anchor slots are randomized.
 print('# Construct Anchor Slots')
@@ -107,6 +107,12 @@ anchor_slots = {}
 anchor_shuffle_dict = {}
 anchor_ids = []
 motifs_count_sims = []
+
+
+
+
+
+
 
 # Loop through all entries in dataframe
 for i, sr in filter_df.iterrows():
@@ -132,10 +138,9 @@ for i, sr in filter_df.iterrows():
 
         # For the given slot, determine what anchors can be shuffled with it. If distance has been
         # provided then this will be applied.
-        # Create column in data frame to get distance measure for anchor 1
+        # Create column in dataframe to get distance measure for anchor 1
         # JR note: distance should be between anchor 1 and anchor2 NOT between anchor 1 and all other anchors.
-        # JR note: need to update this script so that the distance is considered between anchor 1 and 2.
-        # JR note: Overall, distance is COMPLETE wrong. DON'T USE>
+        # JR note: need to update this script so that the distance is considered between anchor 1 and 2. 
         filter_df['tmp_dist'] = abs(filter_df['start1'] - sr['start1'])
         if account_dist == 'Yes':
 
@@ -155,7 +160,7 @@ for i, sr in filter_df.iterrows():
                                             tmp_dist_df['end1'].astype('str')
         entry_shuffle += list(tmp_dist_df['anchor1_id_name'])
 
-        # Create list of anchors within distance
+        # Create list of anchors wihin distance
         anchor_shuffle_dict[anchor1_id] = entry_shuffle
 
         # Get summary stats of amount of motifs in anchors
@@ -192,6 +197,23 @@ for i, sr in filter_df.iterrows():
 
         # Get summary stats of amount of motifs in anchors
         motifs_count_sims.append(len(entry_shuffle))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ###############################################################################

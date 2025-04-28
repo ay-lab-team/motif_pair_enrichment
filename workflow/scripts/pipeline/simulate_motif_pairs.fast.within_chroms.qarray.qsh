@@ -10,7 +10,8 @@
 set -euo pipefail
 
 # setting software paths
-python="/mnt/bioadhoc-temp/Groups/vd-ay/rignacio/Scripts/Library/miniconda3/miniconda3/bin/python3.10"
+# python="/mnt/bioadhoc-temp/Groups/vd-ay/rignacio/Scripts/Library/miniconda3/miniconda3/bin/python3.10"
+python="/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/mambaforge-pypy3/envs/lc-pipelines/bin/python"
 
 # getting arguments
 if [ ! -v "SLURM_ARRAY_TASK_ID" ];
@@ -25,7 +26,8 @@ fi
 source workflow/source_funcs.sh
 
 # set the input path from FIMO results
-input_path="results/fimo/${sample_name}/summarize_results/summary.txt"
+input_path="results/fimo_single_sample/${sample_name}/summarize_results/summary.txt"
+blacklist=""
 
 started_job_message "simulate-motif-pairs-fast"
 
@@ -52,6 +54,7 @@ batch_fn="${sample_dir}/batch${SLURM_ARRAY_TASK_ID}.results.txt"
 # run one batch for the given sample
 $python workflow/scripts/pipeline/simulate_motif_pairs.fast.py \
     --sims 1000 --account_dist No \
+    --blacklist "$blacklist" \
     --inputpath "$input_path" --savepath "$batch_fn"
 
 # testing only $python workflow/scripts/pipeline/sample_batches_with_distance.py \
