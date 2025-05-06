@@ -10,8 +10,7 @@
 set -euo pipefail
 
 # setting software paths
-#python="/mnt/bioadhoc-temp/Groups/vd-ay/rignacio/Scripts/Library/miniconda3/miniconda3/bin/python3.10"
-python="/mnt/BioAdHoc/Groups/vd-ay/jreyna/software/Herman-Cluster-v3/mambaforge-pypy3/envs/lc-pipelines/bin/python"
+python="<path-to-python-bin>/python"
 
 # getting arguments
 if [ ! -v "SLURM_ARRAY_TASK_ID" ];

@@ -6,7 +6,7 @@ import numpy as np
 import time
 import argparse
 import pybedtools as pbt
-pbt.set_bedtools_path('/mnt/BioApps/bedtools/bin')
+pbt.set_bedtools_path('<path-to-bedtools-bin>')
 
 ###############################################################################
 # Setup the commandline interface
@@ -108,12 +108,6 @@ anchor_shuffle_dict = {}
 anchor_ids = []
 motifs_count_sims = []
 
-
-
-
-
-
-
 # Loop through all entries in dataframe
 for i, sr in filter_df.iterrows():
 
@@ -198,24 +192,6 @@ for i, sr in filter_df.iterrows():
         # Get summary stats of amount of motifs in anchors
         motifs_count_sims.append(len(entry_shuffle))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ###############################################################################
 # Conduct Simulations
 ###############################################################################
@@ -255,7 +231,6 @@ for anchor_name1, anchor_name2 in filter_df[['anchor_name1', 'anchor_name2']].va
         # Update counter
         sim_idx += 1
                                                             
-
 ###############################################################################
 # Save json file to output
 ###############################################################################

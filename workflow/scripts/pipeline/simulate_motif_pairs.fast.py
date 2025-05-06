@@ -6,7 +6,7 @@ import numpy as np
 import time
 import argparse
 import pybedtools as pbt
-pbt.set_bedtools_path('/mnt/BioApps/bedtools/bin')
+pbt.set_bedtools_path('<path-to-bedtools-bin>')
 
 ###############################################################################
 # Setup the commandline interface

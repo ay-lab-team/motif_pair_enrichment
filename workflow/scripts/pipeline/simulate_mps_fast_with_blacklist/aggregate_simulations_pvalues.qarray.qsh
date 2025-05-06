@@ -7,7 +7,7 @@
 #SBATCH --mail-type=None
 
 # setting software paths
-python="/mnt/bioadhoc-temp/Groups/vd-ay/rignacio/Scripts/Library/miniconda3/miniconda3/bin/python3.10"
+python="<path-to-python-bin>/python3.10"
 
 # getting arguments
 if [ ! -v "SLURM_ARRAY_TASK_ID" ];
